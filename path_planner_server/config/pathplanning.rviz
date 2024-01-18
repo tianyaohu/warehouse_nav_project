@@ -9,8 +9,9 @@ Panels:
         - /Map1
         - /Map1/Topic1
         - /LaserScan1
-        - /ParticleCloud1
         - /ParticleCloud1/Topic1
+        - /Map2
+        - /Map3
       Splitter Ratio: 0.5
     Tree Height: 553
   - Class: rviz_common/Selection
@@ -78,6 +79,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_link:
+          Value: true
         map:
           Value: true
         robot_base_docking_contact_link:
@@ -128,6 +131,8 @@ Visualization Manager:
           robot_odom:
             robot_base_footprint:
               robot_base_link:
+                base_link:
+                  {}
                 robot_front_cover_link:
                   robot_base_docking_contact_link:
                     {}
@@ -208,6 +213,48 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /particle_cloud
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap_updates
+      Use Timestamp: false
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -254,25 +301,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10.0917387008667
+      Distance: 7.473112106323242
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.14186644554138184
-        Y: 0.40111637115478516
-        Z: 0.0002989768981933594
+        X: 2.9597511291503906
+        Y: -0.6883277893066406
+        Z: 0.00466156005859375
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.20479682087898254
+      Pitch: 0.979576587677002
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.961755752563477
+      Yaw: 0.13234305381774902
     Saved: ~
 Window Geometry:
   Displays:
