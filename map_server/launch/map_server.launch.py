@@ -1,19 +1,25 @@
 import os
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
+from launch import LaunchDescription
+
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 
 def generate_launch_description():
-
-    map_file_arg = DeclareLaunchArgument(
-        "map_file", default_value="warehouse_map_sim.yaml"
-    )
-
-    map_file = os.path.join(get_package_share_directory('map_server'), 'config', map_file_arg)
     rviz_config_dir = os.path.join(get_package_share_directory('map_server'), 'config', 'launch_part.rviz')
 
+    #everything default as sim
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'map_file',
+            default_value="warehouse_map_sim.yaml", 
+            description='name of map_file within map_server/config'
+        ),
+
         Node(
             package='rviz2',
             executable='rviz2',
@@ -28,8 +34,8 @@ def generate_launch_description():
             name='map_server',
             output='screen',
             parameters=[{'use_sim_time': True}, 
-                        {'yaml_filename':map_file} 
-                       ]),
+                        {'yaml_filename':PathJoinSubstitution([FindPackageShare("map_server"), 'config', LaunchConfiguration("map_file")])}
+                        ]),
 
         Node(
             package='nav2_lifecycle_manager',
