@@ -21,6 +21,14 @@ def generate_launch_description():
         ),
 
         Node(
+            package='rviz2',
+            executable='rviz2',
+            output='screen',
+            name='rviz_node',
+            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
+            arguments=['-d', rviz_config_dir]),
+
+        Node(
             package='cartographer_ros', 
             executable='cartographer_node', 
             name='cartographer_node',
@@ -31,15 +39,11 @@ def generate_launch_description():
 
         Node(
             package='cartographer_ros',
+            executable='occupancy_grid_node',
+            output='screen',
+            name='occupancy_grid_node',
             parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
             arguments=['-resolution', '0.05', '-publish_period_sec', '1.0']
         ),
 
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            output='screen',
-            name='rviz_node',
-            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
-            arguments=['-d', rviz_config_dir])
     ]) 
