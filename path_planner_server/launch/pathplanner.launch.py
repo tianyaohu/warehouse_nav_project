@@ -26,7 +26,7 @@ def generate_launch_description():
             executable='rviz2',
             output='screen',
             name='rviz_node',
-            parameters=[{'use_sim_time': True}],parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
+            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
             arguments=['-d', rviz_config_dir]),
 
         Node(
