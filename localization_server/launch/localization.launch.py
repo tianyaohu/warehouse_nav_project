@@ -19,12 +19,18 @@ def generate_launch_description():
             description='name of map_file within map_server/config'
         ),
 
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value="True", 
+            description='Turn on/off sim time setting'
+        ),
+
         Node(
             package='nav2_map_server',
             executable='map_server',
             name='map_server',
             output='screen',
-            parameters=[{'use_sim_time': True}, 
+            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")},
                         {'yaml_filename':PathJoinSubstitution([FindPackageShare("map_server"), 'config', LaunchConfiguration("map_file")])}]
         ),
             
@@ -41,7 +47,7 @@ def generate_launch_description():
             executable='lifecycle_manager',
             name='lifecycle_manager_localization',
             output='screen',
-            parameters=[{'use_sim_time': True},
+            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")},
                         {'autostart': True},
                         {'node_names': ['map_server', 'amcl']}]
         ),

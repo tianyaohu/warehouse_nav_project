@@ -2,6 +2,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
@@ -13,13 +15,19 @@ def generate_launch_description():
     rviz_config_dir = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'pathplanning.rviz')
     
     return LaunchDescription([    
-        # Node(
-        #     package='rviz2',
-        #     executable='rviz2',
-        #     output='screen',
-        #     name='rviz_node',
-        #     parameters=[{'use_sim_time': True}],
-        #     arguments=['-d', rviz_config_dir]),
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value="True", 
+            description='Turn on/off sim time setting'
+        ),
+
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            output='screen',
+            name='rviz_node',
+            parameters=[{'use_sim_time': True}],parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")}],
+            arguments=['-d', rviz_config_dir]),
 
         Node(
             package='tf2_ros',
@@ -65,7 +73,8 @@ def generate_launch_description():
             executable='lifecycle_manager',
             name='lifecycle_manager_pathplanner',
             output='screen',
-            parameters=[{'autostart': True},
+            parameters=[{'use_sim_time': LaunchConfiguration("use_sim_time")},
+                        {'autostart': True},
                         {'node_names': ['planner_server',
                                         'controller_server',
                                         'recoveries_server',
