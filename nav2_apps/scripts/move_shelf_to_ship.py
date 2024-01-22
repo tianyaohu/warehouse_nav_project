@@ -12,12 +12,12 @@ from move_controller import MovementController
 from rclpy.executors import MultiThreadedExecutor
 # Shelf positions for picking
 shelf_positions = {
-    "shelf_start": [5.273, -2.853, 0],
-    "loading_pose": [5.72, 0.0, -1.78]
+    "shelf_start": [0.05, 0.0, 0],
+    "loading_pose": [4.24, -0.35, -1.67]
 }
 
 shipping_destinations = {
-    "office_corner" : [0.5, -3.0, 1.78]
+    "office_corner" : [0.2, -2.8, 1.2]
 }
 
 '''
