@@ -13,7 +13,7 @@ from rclpy.executors import MultiThreadedExecutor
 # Shelf positions for picking
 shelf_positions = {
     "shelf_start": [0.05, 0.0, 0],
-    "loading_pose": [4.24, -0.35, -1.67]
+    "loading_pose": [4.5, -0.35, -1.7]
 }
 
 shipping_destinations = {
@@ -119,13 +119,6 @@ def main():
         # (1) get request future
         approach_shelf_result = shelf_client.send_request()
 
-        # Wait for the future result
-        # while rclpy.ok() and not approach_result_future.done():
-        #     time.sleep(0.2)
-        #     print("not done? ", approach_result_future.done())
-        #     print("result? ", approach_result_future.result())
-
-
         # (2) SHould have wait until request is finsihed before print
         print("shelf should be lifted by now")
 
@@ -133,7 +126,7 @@ def main():
 
         # if shelf was approach shelf service return successful
         if approach_shelf_result:
-            movement_controller.move_for_x_sec(-0.1, 0, 22)
+            movement_controller.move_for_x_sec(-0.1, 0, 16)
 
             go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
 
