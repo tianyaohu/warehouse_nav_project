@@ -17,7 +17,7 @@ shelf_positions = {
 }
 
 shipping_destinations = {
-    "shelf_end" : [0.5, -3.0]
+    "office_corner" : [0.5, -3.0, 1.78]
 }
 
 '''
@@ -100,42 +100,47 @@ def main():
     #init move controller
     movement_controller = MovementController()
 
-    # (1) init shelf client
-    shelf_client = AttachShelfClient()
+    # # (1) init shelf client
+    # shelf_client = AttachShelfClient()
 
     # Set robot initial pose
-    initial_pose = get_sim_initial_pose(navigator)
+    # initial_pose = get_sim_initial_pose(navigator)
     
-    #announcing initial pose set
-    print("Simulation initial pose set")
+    # #announcing initial pose set
+    # print("Simulation initial pose set")
 
-    # Wait for navigation to activate fully
-    navigator.waitUntilNav2Active()
+    # # Wait for navigation to activate fully
+    # navigator.waitUntilNav2Active()
 
-    loading_success = go_to_pose(navigator, shelf_positions['loading_pose'],  'loading_pose', recovery_pose=initial_pose)
+    # loading_success = go_to_pose(navigator, shelf_positions['loading_pose'],  'loading_pose', recovery_pose=initial_pose)
 
-    if loading_success == TaskResult.SUCCEEDED:
-        ############ ATTACH SHELF CLIENT #############
+    # if loading_success == TaskResult.SUCCEEDED:
+    #     ############ ATTACH SHELF CLIENT #############
 
 
-        # (2) get request future
-        approach_result_future = shelf_client.get_request_future()
+    #     # (2) get request future
+    #     approach_result_future = shelf_client.get_request_future()
 
-        # Wait for the future result
-        while rclpy.ok() and not approach_result_future.done():
-            time.sleep(0.2)
+    #     # Wait for the future result
+    #     while rclpy.ok() and not approach_result_future.done():
+    #         time.sleep(0.2)
 
-        # (3) SHould have wait until request is finsihed before print
-        print("shelf should be lifted by now")
+    #     # (3) SHould have wait until request is finsihed before print
+    #     print("shelf should be lifted by now")
 
         #if shelf was approach shelf service return successful
-        # if approach_result_future.result():
-        #     movement_controller
-        # else:
+    # if approach_result_future.result():
+    if True:
+        # movement_controller.move_for_x_sec(-0.1, 0, 22)
 
+        go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
+
+        print("go to shipping success? ", go2shipping_success)
     else:
-        print("Failed reaching loading pose, Terminating...")
-        return
+        print("Approach Shelf Failed")
+    # else:
+    #     print("Failed reaching loading pose, Terminating...")
+    #     return
 
 
     exit(0)

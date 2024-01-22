@@ -11,13 +11,13 @@ class MovementController(Node):
 
     def move_for_x_sec(self, linear_x, angular_z, duration_sec):
         twist_msg = Twist()
-        twist_msg.linear.x = linear_x
-        twist_msg.angular.z = angular_z
+        twist_msg.linear.x = float(linear_x)
+        twist_msg.angular.z = float(angular_z)
 
         start_time = time.time()
         while (time.time() - start_time) < duration_sec and rclpy.ok():
             self.publisher.publish(twist_msg)
-            self.get_logger().info(f"Moving: Linear={linear_x}, Angular={angular_z}")
+            self.get_logger().info(f"Moving: Linear={linear_x}, Angular={angular_z} for {(time.time() - start_time)} seconds")
             time.sleep(0.1)  # Adjust the sleep duration as needed
 
         # Stop the robot after the specified duration
