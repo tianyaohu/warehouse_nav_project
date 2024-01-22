@@ -5,21 +5,25 @@ import time
 
 from rclpy.node import Node
 from attach_shelf.srv import GoToLoading
-from std_msgs.msg import Empty
+from std_msgs.msg import String
 from geometry_msgs.msg import Polygon, Point32
-
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from rclpy.executors import MultiThreadedExecutor
 
 class AttachShelfClient(Node):
 
     def __init__(self):
         super().__init__('approach_shelf_client_async')
 
-        #elevator publishers
-        self.elevate_up_pub_ = self.create_publisher(Empty, 'elevator_up', 10)
-        self.elevate_down_pub_ = self.create_publisher(Empty, 'elevator_down', 10)
+        # Define QoS profile with reliability set to reliable and durability set to transient local
+        qos_profile_elevator = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT, 
+            durability=DurabilityPolicy.VOLATILE,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10  
+        )
 
+        #elevator publishers
+        self.elevate_up_pub_ = self.create_publisher(String, 'elevator_up', qos_profile_elevator)
+        self.elevate_down_pub_ = self.create_publisher(String, 'elevator_down', qos_profile_elevator)
 
         # Define QoS profile with reliability set to reliable and durability set to transient local
         qos_profile = QoSProfile(
@@ -73,17 +77,20 @@ class AttachShelfClient(Node):
     def send_request(self):
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
+        self.lift_up()
         return self.future.result()
 
     def lift_up(self):
-        msg = Empty()
+        msg = String()
+        msg.data = ""
         self.elevate_up_pub_.publish(msg)
         #set flag for up flag
         self.get_logger().info('Elevator is up')
         self.set_shelf_footprint()
 
     def lift_down(self):
-        msg = Empty()
+        msg = String()
+        msg.data = ""
         self.elevate_down_pub_.publish(msg)
         #set flag for up flag
         self.get_logger().info('Elevator is down')
@@ -101,7 +108,10 @@ def main(args=None):
 
     approach_shelf_client = AttachShelfClient()
 
-    # approach_shelf_client.set_shelf_footprint()
+    # print("request", approach_shelf_client.send_request())
+
+    # for i in range(10):
+    #     approach_shelf_client.lift_up()
 
     # for_loop_sleeper(20)
     
