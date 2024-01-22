@@ -35,7 +35,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value="True", 
+            default_value="False", 
             description='Turn on/off sim time setting'
         ),
 
@@ -59,7 +59,16 @@ def generate_launch_description():
             name='static_transform_publisher_base_link_2_robot_base_link',
             output='screen',
             emulate_tty=True,
-            arguments=['0', '0', '0', '0', '0', '0', 'robot_base_link', 'base_link']
+            arguments=['0', '0', '0', '0', '0', '0', 'robot_base_footprint', 'robot_base_link']
+        ),
+
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher_base_link_2_robot_base_link',
+            output='screen',
+            emulate_tty=True,
+            arguments=['0', '0', '0', '0', '0', '0', 'robot_base_footprint', 'base_link']
         ),
 
         Node(
