@@ -9,6 +9,9 @@ from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
 
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
 
@@ -34,6 +37,12 @@ def generate_launch_description():
             'use_sim_time',
             default_value="True", 
             description='Turn on/off sim time setting'
+        ),
+
+        #Include Approach Shelf Service Server launch file
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([
+                FindPackageShare("attach_shelf"), '/launch', '/start_attach_server.launch.py'])
         ),
         
         Node(

@@ -15,6 +15,8 @@ Panels:
         - /RecievedGlobalPath1
         - /RecievedGlobalPath1/Topic1
         - /TransformedGlobalPath1
+        - /LocalCostMapFootPrint1
+        - /GlobalCostMapFootPrint1
       Splitter Ratio: 0.5
     Tree Height: 553
   - Class: rviz_common/Selection
@@ -181,7 +183,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 8000
+      Max Intensity: 0
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: LaserScan
@@ -314,6 +316,32 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /transformed_global_plan
       Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/Polygon
+      Color: 25; 255; 0
+      Enabled: true
+      Name: LocalCostMapFootPrint
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/published_footprint
+      Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/Polygon
+      Color: 0; 255; 255
+      Enabled: true
+      Name: GlobalCostMapFootPrint
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/published_footprint
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -375,10 +403,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5245766639709473
+      Pitch: 0.9945765733718872
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.217342808842659
+      Yaw: 5.630528450012207
     Saved: ~
 Window Geometry:
   Displays:
