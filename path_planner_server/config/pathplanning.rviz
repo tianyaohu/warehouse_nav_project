@@ -88,43 +88,35 @@ Visualization Manager:
           Value: true
         map:
           Value: true
-        robot_base_docking_contact_link:
+        map:
           Value: true
         robot_base_footprint:
           Value: true
         robot_base_link:
           Value: true
-        robot_front_cover_link:
+        robot_cart_laser:
           Value: true
-        robot_front_laser_base_link:
+        robot_cart_laser_noisy:
+          Value: true
+        robot_cart_laser_noisy_0:
+          Value: true
+        robot_docking_station_laser:
+          Value: true
+        robot_docking_station_laser_noisy:
+          Value: true
+        robot_docking_station_laser_noisy_0:
+          Value: true
+        robot_elevator_base_link:
+          Value: true
+        robot_elevator_platform_link:
           Value: true
         robot_front_laser_link:
-          Value: true
-        robot_front_rgbd_camera_depth_frame:
-          Value: true
-        robot_front_rgbd_camera_depth_optical_frame:
-          Value: true
-        robot_front_rgbd_camera_link:
-          Value: true
-        robot_front_rgbd_camera_rgb_base_link:
-          Value: true
-        robot_front_rgbd_camera_rgb_optical_frame:
-          Value: true
-        robot_imu_link:
           Value: true
         robot_left_wheel_link:
           Value: true
         robot_odom:
           Value: true
-        robot_omni_backwheel_link:
-          Value: true
-        robot_omni_front_leftwheel_link:
-          Value: true
-        robot_omni_front_rightwheel_link:
-          Value: true
         robot_right_wheel_link:
-          Value: true
-        robot_top_cover_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -135,6 +127,8 @@ Visualization Manager:
         map:
           robot_odom:
             robot_base_footprint:
+              base_link:
+                {}
               robot_base_link:
                 base_link:
                   {}
@@ -156,16 +150,22 @@ Visualization Manager:
                   {}
                 robot_left_wheel_link:
                   {}
-                robot_omni_backwheel_link:
-                  {}
-                robot_omni_front_leftwheel_link:
-                  {}
-                robot_omni_front_rightwheel_link:
-                  {}
                 robot_right_wheel_link:
                   {}
-              robot_top_cover_link:
+              robot_front_laser_link:
                 {}
+            robot_cart_laser:
+              {}
+            robot_cart_laser_noisy:
+              {}
+            robot_cart_laser_noisy_0:
+              {}
+            robot_docking_station_laser:
+              {}
+            robot_docking_station_laser_noisy:
+              {}
+            robot_docking_station_laser_noisy_0:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -185,7 +185,7 @@ Visualization Manager:
       Max Color: 255; 255; 255
       Max Intensity: 0
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 288
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -263,7 +263,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path
-      Color: 0; 85; 255
+      Color: 25; 255; 0
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
@@ -291,7 +291,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path
-      Color: 255; 85; 0
+      Color: 255; 0; 255
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224

@@ -14,8 +14,14 @@ def generate_launch_description():
     #everything default as sim
     return LaunchDescription([
         DeclareLaunchArgument(
+            'use_sim_time',
+            default_value="False", 
+            description='Turn on/off sim time setting'
+        ),
+
+        DeclareLaunchArgument(
             'map_file',
-            default_value="warehouse_map_sim.yaml", 
+            default_value="warehouse_map_real.yaml", 
             description='name of map_file within map_server/config'
         ),
 
