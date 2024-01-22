@@ -70,8 +70,10 @@ class AttachShelfClient(Node):
         self.local_footprint_pub_.publish(self.footprint_msg)
         print("published foot print")
 
-    def get_request_future(self):
-        return self.cli.call_async(self.req)
+    def send_request(self):
+        self.future = self.cli.call_async(self.req)
+        rclpy.spin_until_future_complete(self, self.future)
+        return self.future.result()
 
     def lift_up(self):
         msg = Empty()

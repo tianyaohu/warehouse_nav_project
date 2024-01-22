@@ -13,7 +13,7 @@ from rclpy.executors import MultiThreadedExecutor
 # Shelf positions for picking
 shelf_positions = {
     "shelf_start": [5.273, -2.853, 0],
-    "loading_pose": [5.78, 0.0, -1.78]
+    "loading_pose": [5.72, 0.0, -1.78]
 }
 
 shipping_destinations = {
@@ -91,7 +91,6 @@ def go_to_pose(navigator_obj, pose, location_str = "", recovery_pose = None):
 
 
 def main():
-
     rclpy.init()
 
     #init navigator
@@ -100,47 +99,50 @@ def main():
     #init move controller
     movement_controller = MovementController()
 
-    # # (1) init shelf client
-    # shelf_client = AttachShelfClient()
+    # (1) init shelf client
+    shelf_client = AttachShelfClient()
 
     # Set robot initial pose
-    # initial_pose = get_sim_initial_pose(navigator)
+    initial_pose = get_sim_initial_pose(navigator)
     
-    # #announcing initial pose set
-    # print("Simulation initial pose set")
+    #announcing initial pose set
+    print("Simulation initial pose set")
 
-    # # Wait for navigation to activate fully
-    # navigator.waitUntilNav2Active()
+    # Wait for navigation to activate fully
+    navigator.waitUntilNav2Active()
 
-    # loading_success = go_to_pose(navigator, shelf_positions['loading_pose'],  'loading_pose', recovery_pose=initial_pose)
+    loading_success = go_to_pose(navigator, shelf_positions['loading_pose'],  'loading_pose', recovery_pose=initial_pose)
 
-    # if loading_success == TaskResult.SUCCEEDED:
-    #     ############ ATTACH SHELF CLIENT #############
+    if loading_success == TaskResult.SUCCEEDED:
+        ############ ATTACH SHELF CLIENT #############
+
+        # (1) get request future
+        approach_shelf_result = shelf_client.send_request()
+
+        # Wait for the future result
+        # while rclpy.ok() and not approach_result_future.done():
+        #     time.sleep(0.2)
+        #     print("not done? ", approach_result_future.done())
+        #     print("result? ", approach_result_future.result())
 
 
-    #     # (2) get request future
-    #     approach_result_future = shelf_client.get_request_future()
+        # (2) SHould have wait until request is finsihed before print
+        print("shelf should be lifted by now")
 
-    #     # Wait for the future result
-    #     while rclpy.ok() and not approach_result_future.done():
-    #         time.sleep(0.2)
+        print("approach_shelf_result", approach_shelf_result)
 
-    #     # (3) SHould have wait until request is finsihed before print
-    #     print("shelf should be lifted by now")
+        # if shelf was approach shelf service return successful
+        if approach_shelf_result:
+            movement_controller.move_for_x_sec(-0.1, 0, 22)
 
-        #if shelf was approach shelf service return successful
-    # if approach_result_future.result():
-    if True:
-        # movement_controller.move_for_x_sec(-0.1, 0, 22)
+            go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
 
-        go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
-
-        print("go to shipping success? ", go2shipping_success)
+            print("go to shipping success? ", go2shipping_success)
+        else:
+            print("Approach Shelf Failed")
     else:
-        print("Approach Shelf Failed")
-    # else:
-    #     print("Failed reaching loading pose, Terminating...")
-    #     return
+        print("Failed reaching loading pose, Terminating...")
+        return
 
 
     exit(0)
