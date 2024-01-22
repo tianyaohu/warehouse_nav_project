@@ -2,13 +2,18 @@ import time
 from geometry_msgs.msg import PoseStamped
 from rclpy.duration import Duration
 import rclpy
+import math
 
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
+from attach_shelf_client import AttachShelfClient
+from move_controller import MovementController
+
+from rclpy.executors import MultiThreadedExecutor
 # Shelf positions for picking
 shelf_positions = {
-    "shelf_start": [5.273, -2.853],
-    "loading_pose": [5.0, 0.0]
+    "shelf_start": [5.273, -2.853, 0],
+    "loading_pose": [5.78, 0.0, -1.78]
 }
 
 shipping_destinations = {
@@ -36,75 +41,102 @@ def get_sim_initial_pose(nav):
     initial_pose.pose.orientation.z = SIM_START_ORN_Z
     return initial_pose
 
+
+def go_to_pose(navigator_obj, pose, location_str = "", recovery_pose = None):
+    x,y,yaw = pose
+
+    shelf_item_pose = PoseStamped()
+    shelf_item_pose.header.frame_id = 'map'
+    shelf_item_pose.header.stamp = navigator_obj.get_clock().now().to_msg()
+    shelf_item_pose.pose.position.x = x
+    shelf_item_pose.pose.position.y = y
+    shelf_item_pose.pose.orientation.z = math.sin(yaw / 2)
+    shelf_item_pose.pose.orientation.w =  math.cos(yaw / 2)
+    if len(location_str) > 0 :
+        print("Going towards ", location_str)
+    navigator_obj.goToPose(shelf_item_pose)
+
+    #Wait until task is compelte
+    i = 0
+    while not navigator_obj.isTaskComplete():
+        i = i + 1
+        feedback = navigator_obj.getFeedback()
+        if feedback and i % 5 == 0:
+            print('Estimated time of arrival at ' + location_str +
+                  ' for worker: ' + '{0:.0f}'.format(
+                      Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9)
+                  + ' seconds.')
+
+    navigation_result = navigator_obj.getResult()
+
+    if navigation_result == TaskResult.SUCCEEDED:
+        print('Task at ' + location_str +
+                    ' Reached.')
+
+    elif navigation_result == TaskResult.CANCELED:
+        print('Task at ' + location_str +
+              ' was canceled. Returning to staging point...')
+        recovery_pose.header.stamp = navigator_obj.get_clock().now().to_msg()
+        navigator_obj.goToPose(recovery_pose)
+
+    elif navigation_result == TaskResult.FAILED:
+        print('Task at ' + location_str + ' failed!')
+        exit(-1)
+
+    return navigator_obj.getResult()
+
+#TODO
+# def move_for_x_sec(controller):
+    # controller.move_for_x_sec()
+
+
 def main():
-    # Recieved virtual request for picking item at Shelf A and bringing to
-    # worker at the pallet jack 7 for shipping. This request would
-    # contain the shelf ID ("shelf_A") and shipping destination ("pallet_jack7")
-    ####################
-    request_item_location = 'loading_pose'
-    request_destination = 'shelf_end'
-    ####################
 
     rclpy.init()
 
+    #init navigator
     navigator = BasicNavigator()
+
+    #init move controller
+    movement_controller = MovementController()
+
+    # (1) init shelf client
+    shelf_client = AttachShelfClient()
 
     # Set robot initial pose
     initial_pose = get_sim_initial_pose(navigator)
+    
     #announcing initial pose set
     print("Simulation initial pose set")
 
     # Wait for navigation to activate fully
     navigator.waitUntilNav2Active()
 
-    shelf_item_pose = PoseStamped()
-    shelf_item_pose.header.frame_id = 'map'
-    shelf_item_pose.header.stamp = navigator.get_clock().now().to_msg()
-    shelf_item_pose.pose.position.x = shelf_positions[request_item_location][0]
-    shelf_item_pose.pose.position.y = shelf_positions[request_item_location][1]
-    shelf_item_pose.pose.orientation.z = 1.0
-    shelf_item_pose.pose.orientation.w = 0.0
-    print('Received request for item picking at ' + request_item_location + '.')
-    navigator.goToPose(shelf_item_pose)
+    loading_success = go_to_pose(navigator, shelf_positions['loading_pose'],  'loading_pose', recovery_pose=initial_pose)
 
-    # Do something during your route
-    # (e.x. queue up future tasks or detect person for fine-tuned positioning)
-    # Print information for workers on the robot's ETA for the demonstration
-    i = 0
-    while not navigator.isTaskComplete():
-        i = i + 1
-        feedback = navigator.getFeedback()
-        if feedback and i % 5 == 0:
-            print('Estimated time of arrival at ' + request_item_location +
-                  ' for worker: ' + '{0:.0f}'.format(
-                      Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9)
-                  + ' seconds.')
+    if loading_success == TaskResult.SUCCEEDED:
+        ############ ATTACH SHELF CLIENT #############
 
-    result = navigator.getResult()
-    if result == TaskResult.SUCCEEDED:
-        print('Got product from ' + request_item_location +
-              '! Bringing product to shipping destination (' + request_destination + ')...')
-        shipping_destination = PoseStamped()
-        shipping_destination.header.frame_id = 'map'
-        shipping_destination.header.stamp = navigator.get_clock().now().to_msg()
-        shipping_destination.pose.position.x = shipping_destinations[request_destination][0]
-        shipping_destination.pose.position.y = shipping_destinations[request_destination][1]
-        shipping_destination.pose.orientation.z = 1.0
-        shipping_destination.pose.orientation.w = 0.0
-        navigator.goToPose(shipping_destination)
 
-    elif result == TaskResult.CANCELED:
-        print('Task at ' + request_item_location +
-              ' was canceled. Returning to staging point...')
-        initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-        navigator.goToPose(initial_pose)
+        # (2) get request future
+        approach_result_future = shelf_client.get_request_future()
 
-    elif result == TaskResult.FAILED:
-        print('Task at ' + request_item_location + ' failed!')
-        exit(-1)
+        # Wait for the future result
+        while rclpy.ok() and not approach_result_future.done():
+            time.sleep(0.2)
 
-    while not navigator.isTaskComplete():
-        pass
+        # (3) SHould have wait until request is finsihed before print
+        print("shelf should be lifted by now")
+
+        #if shelf was approach shelf service return successful
+        # if approach_result_future.result():
+        #     movement_controller
+        # else:
+
+    else:
+        print("Failed reaching loading pose, Terminating...")
+        return
+
 
     exit(0)
 
