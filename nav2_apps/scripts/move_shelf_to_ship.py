@@ -139,15 +139,12 @@ def main():
             #lowering elevator
             shelf_client.lift_down()
 
-            #(3) Do a small pause 
+            # Do a small pause 
             movement_controller.move_for_x_sec(0,0,0.5)
 
             #go back to initial position
-
             go_to_pose(navigator, shelf_positions['initial_position'],  'initial_position')
 
-
-            print("go to shipping success? ", go2shipping_success)
         else:
             print("Approach Shelf Failed")
     else:
