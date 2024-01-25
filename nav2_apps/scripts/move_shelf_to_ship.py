@@ -12,12 +12,13 @@ from move_controller import MovementController
 from rclpy.executors import MultiThreadedExecutor
 # Shelf positions for picking
 shelf_positions = {
+    "initial_position": [-0.159, 0.0, 0.0],
     "shelf_start": [5.273, -2.853, 0],
     "loading_pose": [5.72, 0.0, -1.78]
 }
 
 shipping_destinations = {
-    "office_corner" : [0.5, -3.0, 1.78]
+    "office_corner" : [0.5, -3.0, 1.57]
 }
 
 '''
@@ -119,23 +120,32 @@ def main():
         # (1) get request future
         approach_shelf_result = shelf_client.send_request()
 
-        # Wait for the future result
-        # while rclpy.ok() and not approach_result_future.done():
-        #     time.sleep(0.2)
-        #     print("not done? ", approach_result_future.done())
-        #     print("result? ", approach_result_future.result())
-
-
         # (2) SHould have wait until request is finsihed before print
         print("shelf should be lifted by now")
+
+        #(3) Do a small pause 
+        movement_controller.move_for_x_sec(0,0,0.5)
 
         print("approach_shelf_result", approach_shelf_result)
 
         # if shelf was approach shelf service return successful
         if approach_shelf_result:
+            #backing from the shelf
             movement_controller.move_for_x_sec(-0.1, 0, 22)
 
+            #go to shipping position
             go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
+
+            #lowering elevator
+            shelf_client.lift_down()
+
+            #(3) Do a small pause 
+            movement_controller.move_for_x_sec(0,0,0.5)
+
+            #go back to initial position
+
+            go_to_pose(navigator, shelf_positions['initial_position'],  'initial_position')
+
 
             print("go to shipping success? ", go2shipping_success)
         else:
