@@ -10,35 +10,30 @@ from attach_shelf_client import AttachShelfClient
 from move_controller import MovementController
 
 from rclpy.executors import MultiThreadedExecutor
+
+START_POS_X = -0.159
+START_POS_Y = 0.0
+START_ORN_Z = 0.0
+
 # Shelf positions for picking
 shelf_positions = {
     "shelf_start": [0.05, 0.0, 0],
-    "loading_pose": [4.5, -0.35, -1.7]
+    "loading_pose": [4.5, -0.35, -1.57],
+    "initial_position": [START_POS_X, START_POS_Y, START_ORN_Z]
 }
 
 shipping_destinations = {
     "office_corner" : [0.2, -2.8, 1.2]
 }
 
-'''
-Basic item picking demo. In this demonstration, the expectation
-is that a person is waiting at the item shelf to put the item on the robot
-and at the pallet jack to remove it
-(probably with a button for 'got item, robot go do next task').
-'''
-
-SIM_START_POS_X = -0.159
-SIM_START_POS_Y = 0.0
-SIM_START_ORN_Z = 0.0
-
 def get_sim_initial_pose(nav):
     # Set initial pose
     initial_pose = PoseStamped()
     initial_pose.header.frame_id = 'map'
     initial_pose.header.stamp = nav.get_clock().now().to_msg()
-    initial_pose.pose.position.x = SIM_START_POS_X
-    initial_pose.pose.position.y = SIM_START_POS_Y
-    initial_pose.pose.orientation.z = SIM_START_ORN_Z
+    initial_pose.pose.position.x = START_POS_X
+    initial_pose.pose.position.y = START_POS_Y
+    initial_pose.pose.orientation.z = START_ORN_Z
     return initial_pose
 
 
@@ -122,15 +117,27 @@ def main():
         # (2) SHould have wait until request is finsihed before print
         print("shelf should be lifted by now")
 
+        #(3) Do a small pause 
+        movement_controller.move_for_x_sec(0,0,1)
+
         print("approach_shelf_result", approach_shelf_result)
 
         # if shelf was approach shelf service return successful
         if approach_shelf_result:
+            #backing from the shelf
             movement_controller.move_for_x_sec(-0.1, 0, 16)
 
-            go2shipping_success = go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
+            #go to shipping position
+            go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
 
-            print("go to shipping success? ", go2shipping_success)
+            #lowering elevator
+            shelf_client.lift_down()
+
+            # Do a small pause 
+            movement_controller.move_for_x_sec(0,0,1)
+
+            #go back to initial position
+            go_to_pose(navigator, shelf_positions['initial_position'],  'initial_position')
         else:
             print("Approach Shelf Failed")
     else:
