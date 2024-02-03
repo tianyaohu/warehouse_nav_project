@@ -23,7 +23,7 @@ shelf_positions = {
 }
 
 shipping_destinations = {
-    "office_corner" : [0.2, -2.8, 1.2]
+    "office_corner" : [0.31, -2.8, -1.72]
 }
 
 def get_sim_initial_pose(nav):
@@ -114,32 +114,37 @@ def main():
         # (1) get request future
         approach_shelf_result = shelf_client.send_request()
 
-        # (2) SHould have wait until request is finsihed before print
-        print("shelf should be lifted by now")
-
-        #(3) Do a small pause 
-        movement_controller.move_for_x_sec(0,0,1)
-
-        print("approach_shelf_result", approach_shelf_result)
-
-        # if shelf was approach shelf service return successful
         if approach_shelf_result:
-            #backing from the shelf
-            movement_controller.move_for_x_sec(-0.1, 0, 16)
+            print("shelf should be lifted by now")
 
-            #go to shipping position
-            go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
-
-            #lowering elevator
-            shelf_client.lift_down()
-
-            # Do a small pause 
+            #(3) Do a small pause 
             movement_controller.move_for_x_sec(0,0,1)
 
-            #go back to initial position
-            go_to_pose(navigator, shelf_positions['initial_position'],  'initial_position')
+            print("approach_shelf_result", approach_shelf_result)
+
+            # if shelf was approach shelf service return successful
+            if approach_shelf_result:
+                #backing from the shelf
+                movement_controller.move_for_x_sec(-0.1, 0, 16)
+
+                #go to shipping position
+                go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
+
+                #lowering elevator
+                shelf_client.lift_down()
+
+                # Do a small pause 
+                movement_controller.move_for_x_sec(0,0,1)
+
+                #move backwards
+                movement_controller.move_for_x_sec(-0.2,0,5)
+
+                #go back to initial position
+                go_to_pose(navigator, shelf_positions['initial_position'],  'initial_position')
+            else:
+                print("Approach Shelf Failed")
         else:
-            print("Approach Shelf Failed")
+            print("Failed to approach shelf. Please check if tf if properly broadcasted in RVIZ and check if the cart is placed backwards")
     else:
         print("Failed reaching loading pose, Terminating...")
         return
