@@ -1,3 +1,4 @@
 [submodule "checkpoint9"]
 	path = checkpoint9
 	url = https://github.com/tianyaohu/checkpoint9.git
+	branch = main
