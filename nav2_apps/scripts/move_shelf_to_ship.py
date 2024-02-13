@@ -113,6 +113,7 @@ def main():
 
         # (1) get request future
         approach_shelf_result = shelf_client.send_request()
+        print(str(type(approach_shelf_result)))
 
         print("approach_shelf_result", approach_shelf_result)
 
@@ -122,12 +123,10 @@ def main():
             #(3) Do a small pause 
             movement_controller.move_for_x_sec(0,0,1)
 
-            print("approach_shelf_result", approach_shelf_result)
-
             # if shelf was approach shelf service return successful
             if approach_shelf_result:
                 #backing from the shelf
-                movement_controller.move_for_x_sec(-0.1, 0, 16)
+                movement_controller.move_for_x_sec(-0.1, 0, 12)
 
                 #go to shipping position
                 go_to_pose(navigator, shipping_destinations['office_corner'],  'office_corner')
