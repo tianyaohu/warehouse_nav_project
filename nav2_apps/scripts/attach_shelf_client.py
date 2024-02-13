@@ -84,16 +84,20 @@ class AttachShelfClient(Node):
         msg.data = ""
         self.elevate_up_pub_.publish(msg)
         #set flag for up flag
-        self.get_logger().info('Elevator is up')
+        self.get_logger().info('Lifting up ...')
         self.set_shelf_footprint()
+        #force sleep for 8 seconds
+        for_loop_sleeper(16)
 
     def lift_down(self):
         msg = String()
         msg.data = ""
         self.elevate_down_pub_.publish(msg)
         #set flag for up flag
-        self.get_logger().info('Elevator is down')
+        self.get_logger().info('Lifting down ...')
         self.set_normal_footprint()
+        #force sleep for 8 seconds
+        for_loop_sleeper(16)
 
 
 #FUNCTIONS BELOW ARE FOR TESTING PURPOSE ONLY

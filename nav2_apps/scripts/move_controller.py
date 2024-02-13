@@ -7,7 +7,9 @@ class MovementController(Node):
 
     def __init__(self):
         super().__init__('move_robot_node')
-        self.publisher = self.create_publisher(Twist, 'robot/cmd_vel', 10)
+        # self.publisher = self.create_publisher(Twist, 'robot/cmd_vel', 10)
+        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)
+
 
     def move_for_x_sec(self, linear_x, angular_z, duration_sec):
         twist_msg = Twist()

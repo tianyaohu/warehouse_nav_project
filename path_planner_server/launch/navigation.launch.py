@@ -94,7 +94,7 @@ def generate_launch_description():
             name='controller_server',
             output='screen',
             parameters=[controller_yaml],
-            remappings=[('/cmd_vel', '/robot/cmd_vel')]
+            # remappings=[('/cmd_vel', '/robot/cmd_vel')]
         ),
 
 
@@ -120,7 +120,7 @@ def generate_launch_description():
             name='bt_navigator',
             output='screen',
             parameters=[bt_navigator_yaml],
-            remappings=[('/cmd_vel', '/robot/cmd_vel')]
+            # remappings=[('/cmd_vel', '/robot/cmd_vel')]
         ),
 
         Node(
