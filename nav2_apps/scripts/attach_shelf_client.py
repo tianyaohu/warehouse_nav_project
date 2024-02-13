@@ -77,7 +77,10 @@ class AttachShelfClient(Node):
     def send_request(self):
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
-        return self.future.result()
+        result = self.future.result()
+        if result:
+            self.set_shelf_footprint()
+        return result
 
     def lift_up(self):
         msg = String()

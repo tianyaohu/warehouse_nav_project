@@ -114,6 +114,8 @@ def main():
         # (1) get request future
         approach_shelf_result = shelf_client.send_request()
 
+        print("approach_shelf_result", approach_shelf_result)
+
         if approach_shelf_result:
             print("shelf should be lifted by now")
 
